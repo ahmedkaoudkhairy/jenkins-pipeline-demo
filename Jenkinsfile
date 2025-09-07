@@ -1,49 +1,39 @@
 pipeline {
-    agent any   // يشتغل على أي Agent متاح
-
-    environment {
-        DOCKER_REGISTRY = "my-dockerhub"
-        IMAGE_NAME = "solar-system"
-    }
+    agent any
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'http://git-server:5555/dasher-org/solar-system.git'
+                // Jenkins هيعمل checkout للـ repo اللي فيه Jenkinsfile
+                checkout scm
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build') {
             steps {
-                sh 'npm install'
+                echo "🔨 Building the project..."
+                sh 'echo "Simulating build step"'
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                sh 'npm test'
+                echo "🧪 Running tests..."
+                sh 'echo "Simulating tests step"'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Deploy') {
             steps {
-                sh "docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${BUILD_ID} ."
-            }
-        }
-
-        stage('Push to Registry') {
-            steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh "docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${BUILD_ID}"
-                }
+                echo "🚀 Deploying application..."
+                sh 'echo "Simulating deploy step"'
             }
         }
     }
 
     post {
         success {
-            echo "✅ Build and Deploy succeeded!"
+            echo "✅ Build succeeded!"
         }
         failure {
             echo "❌ Build failed!"
